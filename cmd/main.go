@@ -56,8 +56,23 @@ func (sudoku Sudoku) GenerateFromEmpty() Sudoku {
 		availableNumbers = append(availableNumbers[0:randomIndex], availableNumbers[randomIndex+1:]...)
 	}
 
+	// sudoku = sudoku.GenerateSecondRow()
+
 	return sudoku
 }
+
+// func (sudoku Sudoku) GenerateSecondRow Sudoku {
+// 	secondRow := sudoku.Rows[1]
+// 	availableNumbers := []int8{1, 2, 3, 4, 5, 6, 7, 8, 9}
+
+// 	for index := range firstRow {
+// 		randomIndex := rand.Intn(len(availableNumbers))
+// 		firstRow[index] = availableNumbers[randomIndex]
+// 		availableNumbers = append(availableNumbers[0:randomIndex], availableNumbers[randomIndex+1:]...)
+// 	}
+
+// 	return sudoku
+// }
 
 // Print prints it u jangus
 func (sudoku Sudoku) Print() {
