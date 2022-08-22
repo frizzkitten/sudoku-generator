@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"math/rand"
+)
 
 func main() {
 	// sudoku := Sudoku{
@@ -17,7 +20,9 @@ func main() {
 	// 	},
 	// }
 
-	MakeEmptySudoku().Print()
+	sudoku := MakeEmptySudoku()
+	sudoku = sudoku.GenerateFromEmpty()
+	sudoku.Print()
 }
 
 // Sudoku is a sudoku
@@ -35,6 +40,20 @@ func MakeEmptySudoku() Sudoku {
 	for rowIndex := 0; rowIndex < 9; rowIndex++ {
 		row := make([]int8, 9)
 		sudoku.Rows[rowIndex] = row
+	}
+
+	return sudoku
+}
+
+// GenerateFromEmpty generates from empty duh
+func (sudoku Sudoku) GenerateFromEmpty() Sudoku {
+	firstRow := sudoku.Rows[0]
+	availableNumbers := []int8{1, 2, 3, 4, 5, 6, 7, 8, 9}
+
+	for index := range firstRow {
+		randomIndex := rand.Intn(len(availableNumbers))
+		firstRow[index] = availableNumbers[randomIndex]
+		availableNumbers = append(availableNumbers[0:randomIndex], availableNumbers[randomIndex+1:]...)
 	}
 
 	return sudoku
