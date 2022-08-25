@@ -77,7 +77,7 @@ func (sudoku Sudoku) getShiftedValues(shift int8) []int8 {
 }
 
 func (sudoku Sudoku) randomSwap() Sudoku {
-	swapFunctions := [](func() Sudoku){sudoku.swapRandomRows/*, sudoku.swapRandomColumns, sudoku.swapRandomNumbers*/}
+	swapFunctions := [](func() Sudoku){sudoku.swapRandomRows, sudoku.swapRandomColumns/*, sudoku.swapRandomNumbers*/}
 	randomIndex := randomInt(int8(len(swapFunctions)))
 	swapFunction := swapFunctions[randomIndex]
 	return swapFunction()
@@ -118,13 +118,20 @@ func removeIndex[T any](slice []T, index int8) []T {
 }
 
 func (sudoku Sudoku) swapRows(index1, index2 int8) Sudoku {
-	fmt.Println("swapping", index1, "and", index2)
+	fmt.Println("swapping rows", index1, "and", index2)
 	sudoku.Rows[index1], sudoku.Rows[index2] = sudoku.Rows[index2], sudoku.Rows[index1]
 	return sudoku
 }
 
 func (sudoku Sudoku) swapRandomColumns() Sudoku {
-	// TODO
+	columnIndex1, columnIndex2 := sudoku.getSwappableIndexes()
+	return sudoku.swapColumns(columnIndex1, columnIndex2)
+}
+
+func (sudoku Sudoku) swapColumns(columnIndex1, columnIndex2 int8) Sudoku {
+	for rowIndex := int8(0); rowIndex < sudoku.scale; rowIndex++ {
+		sudoku.Rows[rowIndex][columnIndex1], sudoku.Rows[rowIndex][columnIndex2] = sudoku.Rows[rowIndex][columnIndex2], sudoku.Rows[rowIndex][columnIndex1]
+	}
 	return sudoku
 }
 
