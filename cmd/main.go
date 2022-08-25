@@ -92,23 +92,29 @@ func getIndexesFromZeroTo(max int8) []int8 {
 }
 
 func (sudoku Sudoku) swapRandomRows() Sudoku {
+	rowIndex1, rowIndex2 := sudoku.getSwappableIndexes()
+	return sudoku.swapRows(rowIndex1, rowIndex2)
+}
+
+func (sudoku Sudoku) getSwappableIndexes() (int8, int8) {
 	possibleIndexes := getIndexesFromZeroTo(sudoku.scaleRoot - 1)
 
-	box := randomInt(sudoku.scaleRoot)
-
-	indexInPossibleIndexes := randomInt(int8(len(possibleIndexes)))
-	rowIndex1 := possibleIndexes[indexInPossibleIndexes]
-
+	indexInPossibleIndexes, index1 := getRandomFromSlice(possibleIndexes)
 	possibleIndexes = removeIndex(possibleIndexes, indexInPossibleIndexes)
+	_, index2 := getRandomFromSlice(possibleIndexes)
+	
+	box := randomInt(sudoku.scaleRoot)
+	return box*sudoku.scaleRoot+index1, box*sudoku.scaleRoot+index2
+}
 
-	indexInPossibleIndexes = randomInt(int8(len(possibleIndexes)))
-	rowIndex2 := possibleIndexes[indexInPossibleIndexes]
-
-	return sudoku.swapRows(box+rowIndex1, box+rowIndex2)
+func getRandomFromSlice[T any](values []T) (int8, T) {
+	index := randomInt(int8(len(values)))
+	value := values[index]
+	return index, value
 }
 
 func removeIndex[T any](slice []T, index int8) []T {
-	return append(slice[:index], slice[index:]...)
+	return append(slice[:index], slice[index+1:]...)
 }
 
 func (sudoku Sudoku) swapRows(index1, index2 int8) Sudoku {
