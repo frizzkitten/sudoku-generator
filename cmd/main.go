@@ -112,6 +112,7 @@ func removeIndex[T any](slice []T, index int8) []T {
 }
 
 func (sudoku Sudoku) swapRows(index1, index2 int8) Sudoku {
+	fmt.Println("swapping", index1, "and", index2)
 	sudoku.Rows[index1], sudoku.Rows[index2] = sudoku.Rows[index2], sudoku.Rows[index1]
 	return sudoku
 }
