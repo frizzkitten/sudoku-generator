@@ -77,7 +77,7 @@ func (sudoku Sudoku) getShiftedValues(shift int8) []int8 {
 }
 
 func (sudoku Sudoku) randomSwap() Sudoku {
-	swapFunctions := [](func() Sudoku){sudoku.swapRandomRows, sudoku.swapRandomColumns/*, sudoku.swapRandomNumbers*/}
+	swapFunctions := [](func() Sudoku){/*sudoku.swapRandomRows, */sudoku.swapRandomColumns/*, sudoku.swapRandomNumbers*/}
 	randomIndex := randomInt(int8(len(swapFunctions)))
 	swapFunction := swapFunctions[randomIndex]
 	return swapFunction()
@@ -129,6 +129,7 @@ func (sudoku Sudoku) swapRandomColumns() Sudoku {
 }
 
 func (sudoku Sudoku) swapColumns(columnIndex1, columnIndex2 int8) Sudoku {
+	fmt.Println("swapping columns", columnIndex1, "and", columnIndex2)
 	for rowIndex := int8(0); rowIndex < sudoku.scale; rowIndex++ {
 		sudoku.Rows[rowIndex][columnIndex1], sudoku.Rows[rowIndex][columnIndex2] = sudoku.Rows[rowIndex][columnIndex2], sudoku.Rows[rowIndex][columnIndex1]
 	}
