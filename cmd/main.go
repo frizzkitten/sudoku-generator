@@ -9,24 +9,10 @@ import (
 
 const (
 	maxRetries = int8(30)
-	swaps      = 1
+	swaps      = 10
 )
 
 func main() {
-	// sudoku := Sudoku{
-	// 	Rows: []Row{
-	// 		{1, 2, 3, 4, 5, 6, 7, 8, 9},
-	// 		{4, 5, 6, 7, 8, 9, 1, 2, 3},
-	// 		{7, 8, 9, 1, 2, 3, 4, 5, 6},
-	// 		{2, 3, 4, 5, 6, 7, 8, 9, 1},
-	// 		{1, 2, 3, 4, 5, 6, 7, 8, 9},
-	// 		{1, 2, 3, 4, 5, 6, 7, 8, 9},
-	// 		{1, 2, 3, 4, 5, 6, 7, 8, 9},
-	// 		{1, 2, 3, 4, 5, 6, 7, 8, 9},
-	// 		{1, 2, 3, 4, 5, 6, 7, 8, 9},
-	// 	},
-	// }
-
 	sudoku := MakeEmptySudoku().GenerateFromEmpty()
 	sudoku.Print()
 }
@@ -77,7 +63,7 @@ func (sudoku Sudoku) getShiftedValues(shift int8) []int8 {
 }
 
 func (sudoku Sudoku) randomSwap() Sudoku {
-	swapFunctions := [](func() Sudoku){/*sudoku.swapRandomRows, */sudoku.swapRandomColumns/*, sudoku.swapRandomNumbers*/}
+	swapFunctions := [](func() Sudoku){sudoku.swapRandomRows, sudoku.swapRandomColumns, sudoku.swapRandomNumbers}
 	randomIndex := randomInt(int8(len(swapFunctions)))
 	swapFunction := swapFunctions[randomIndex]
 	return swapFunction()
@@ -118,7 +104,6 @@ func removeIndex[T any](slice []T, index int8) []T {
 }
 
 func (sudoku Sudoku) swapRows(index1, index2 int8) Sudoku {
-	fmt.Println("swapping rows", index1, "and", index2)
 	sudoku.Rows[index1], sudoku.Rows[index2] = sudoku.Rows[index2], sudoku.Rows[index1]
 	return sudoku
 }
@@ -129,7 +114,6 @@ func (sudoku Sudoku) swapRandomColumns() Sudoku {
 }
 
 func (sudoku Sudoku) swapColumns(columnIndex1, columnIndex2 int8) Sudoku {
-	fmt.Println("swapping columns", columnIndex1, "and", columnIndex2)
 	for rowIndex := int8(0); rowIndex < sudoku.scale; rowIndex++ {
 		sudoku.Rows[rowIndex][columnIndex1], sudoku.Rows[rowIndex][columnIndex2] = sudoku.Rows[rowIndex][columnIndex2], sudoku.Rows[rowIndex][columnIndex1]
 	}
@@ -137,7 +121,26 @@ func (sudoku Sudoku) swapColumns(columnIndex1, columnIndex2 int8) Sudoku {
 }
 
 func (sudoku Sudoku) swapRandomNumbers() Sudoku {
-	// TODO
+	if sudoku.scale < 2 {
+		return sudoku
+	}
+	
+	values := sudoku.getShuffledAllValues()
+	number1, number2 := values[0], values[1]
+
+	return sudoku.swapNumbers(number1, number2)
+}
+
+func (sudoku Sudoku) swapNumbers(number1, number2 int8) Sudoku {
+	for rowIndex, row := range sudoku.Rows {
+		for columnIndex, value := range row {
+			if value == number1 {
+				sudoku.Rows[rowIndex][columnIndex] = number2
+			} else if value == number2 {
+				sudoku.Rows[rowIndex][columnIndex] = number1
+			}
+		}
+	}
 	return sudoku
 }
 
