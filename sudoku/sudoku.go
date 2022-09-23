@@ -35,10 +35,15 @@ func (sudoku Sudoku) fillInDefaultNumbers() Sudoku {
 }
 
 func (sudoku Sudoku) randomize() Sudoku {
+	if sudoku.scale == 1 {
+		return sudoku
+	}
+
 	var i int8
 	for ; i < swaps; i++ {
 		sudoku = sudoku.randomSwap()
 	}
+
 	return sudoku
 }
 

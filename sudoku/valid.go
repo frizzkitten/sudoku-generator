@@ -2,40 +2,63 @@ package sudoku
 
 // IsValid tells you if this is a valid sudoku
 func (sudoku Sudoku) IsValid() bool {
-	// TODO
-	return false
-}
-func (sudoku Sudoku) isValidNumberInColumnAndBox(number, rowIndex, columnIndex int8) bool {
-	return sudoku.isValidNumberInColumn(number, rowIndex, columnIndex) && sudoku.isValidNumberInBox(number, rowIndex, columnIndex)
+	return sudoku.rowsAreValid() && sudoku.columnsAreValid() && sudoku.boxesAreValid()
 }
 
-func (sudoku Sudoku) isValidNumberInColumn(number int8, rowIndex int8, columnIndex int8) bool {
-	for rowIndexToCheck := int8(0); rowIndexToCheck < sudoku.scale; rowIndexToCheck++ {
-		if rowIndex == rowIndexToCheck {
-			continue
-		}
+func (sudoku Sudoku) rowsAreValid() bool {
+	for _, row := range sudoku.Rows {
+		seen := map[int8]bool{}
 
-		numberInColumn := sudoku.Rows[rowIndexToCheck][columnIndex]
-		if numberInColumn == number {
-			return false
+		for _, value := range row {
+			if value < 1 || value > sudoku.scale || seen[value] {
+				return false
+			}
+			seen[value] = true
 		}
 	}
 
 	return true
 }
 
-func (sudoku Sudoku) isValidNumberInBox(number int8, rowIndex int8, columnIndex int8) bool {
-	scaleRoot := sudoku.scaleRoot
-	boxRow := rowIndex / scaleRoot
-	boxColumn := columnIndex / scaleRoot
-	for rowIndexToCheck := boxRow * scaleRoot; rowIndexToCheck < boxRow*scaleRoot+1; rowIndexToCheck++ {
-		for columnIndexToCheck := boxColumn * scaleRoot; columnIndexToCheck < boxColumn*scaleRoot+scaleRoot; columnIndexToCheck++ {
-			if rowIndexToCheck == rowIndex && columnIndexToCheck == columnIndex {
-				continue
-			}
-			if sudoku.Rows[rowIndexToCheck][columnIndexToCheck] == number {
+func (sudoku Sudoku) columnsAreValid() bool {
+	for columnIndex := range sudoku.Rows {
+		seen := map[int8]bool{}
+
+		for rowIndex := int8(0); rowIndex < sudoku.scale; rowIndex++ {
+			value := sudoku.Rows[rowIndex][columnIndex]
+			if value < 1 || value > sudoku.scale || seen[value] {
 				return false
 			}
+			seen[value] = true
+		}
+	}
+
+	return true
+}
+
+func (sudoku Sudoku) boxesAreValid() bool {
+	for boxRowIndex := int8(0); boxRowIndex < sudoku.scaleRoot; boxRowIndex++ {
+		for boxColumnIndex := int8(0); boxColumnIndex < sudoku.scaleRoot; boxColumnIndex++ {
+			if !sudoku.isValidBox(boxRowIndex, boxColumnIndex) {
+				return false
+			}
+		}
+	}
+
+	return true
+}
+
+func (sudoku Sudoku) isValidBox(boxRowIndex, boxColumnIndex int8) bool {
+	seen := map[int8]bool{}
+	scaleRoot := sudoku.scaleRoot
+
+	for rowIndex := boxRowIndex * scaleRoot; rowIndex < boxRowIndex*scaleRoot+scaleRoot; rowIndex++ {
+		for columnIndex := boxColumnIndex * scaleRoot; columnIndex < boxColumnIndex*scaleRoot+scaleRoot; columnIndex++ {
+			value := sudoku.Rows[rowIndex][columnIndex]
+			if value < 1 || value > sudoku.scale || seen[value] {
+				return false
+			}
+			seen[value] = true
 		}
 	}
 

@@ -71,9 +71,11 @@ func (sudoku Sudoku) swapNumbers(number1, number2 int8) Sudoku {
 }
 
 func (sudoku Sudoku) getShuffledAllValues() []int8 {
-	values := make([]int8, sudoku.scale)
-	for i := int8(0); i < sudoku.scale; i++ {
-		values[i] = i + 1
-	}
+	values := sudoku.getSliceWithOneThroughScale()
 	return shuffle(values)
+}
+
+func (sudoku Sudoku) getSliceWithOneThroughScale() []int8 {
+	indexesFromZeroToScaleMinusOne := getIndexesFromZeroTo(sudoku.scale - 1)
+	return add(1).toEach(indexesFromZeroToScaleMinusOne)
 }

@@ -1,20 +1,23 @@
 package sudoku 
 
 import (
+	"fmt"
 	"math/rand"
 	"time"
 )
 
 func getIndexesFromZeroTo(max int8) []int8 {
 	indexes := make([]int8, max+1)
-	for i := int8(0); i <= max; i++ {
+	var i int8
+	for ; i <= max; i++ {
 		indexes[i] = i
 	}
 	return indexes
 }
 
 func getRandomFromSlice[T any](values []T) (int8, T) {
-	index := randomInt(int8(len(values)))
+	numValues := int8(len(values))
+	index := randomInt(numValues)
 	value := values[index]
 	return index, value
 }
@@ -24,8 +27,11 @@ func removeIndex[T any](slice []T, index int8) []T {
 }
 
 func shuffle(slice []int8) []int8 {
-	for i := 0; i < len(slice); i++ {
-		randomIndex := randomInt(int8(len(slice)))
+	var i int8
+	sliceLength := int8(len(slice))
+	
+	for ; i < sliceLength; i++ {
+		randomIndex := randomInt(sliceLength)
 		slice[i], slice[randomIndex] = slice[randomIndex], slice[i]
 	}
 
@@ -33,6 +39,7 @@ func shuffle(slice []int8) []int8 {
 }
 
 func randomInt(firstAboveMax int8) int8 {
+	fmt.Println("firstAboveMax: ", firstAboveMax)
 	random := rand.New(rand.NewSource(time.Now().UnixNano()))
 	return int8(random.Int() % int(firstAboveMax))
 }
