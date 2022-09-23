@@ -1,0 +1,5 @@
+{
+  "go.autocompleteUnimportedPackages": true,
+  "go.lintOnSave": "workspace",
+  "go.formatTool": "goimports"
+}
