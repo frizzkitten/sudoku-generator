@@ -1,7 +1,6 @@
 package sudoku 
 
 import (
-	"fmt"
 	"math/rand"
 	"time"
 )
@@ -39,7 +38,6 @@ func shuffle(slice []int8) []int8 {
 }
 
 func randomInt(firstAboveMax int8) int8 {
-	fmt.Println("firstAboveMax: ", firstAboveMax)
 	random := rand.New(rand.NewSource(time.Now().UnixNano()))
 	return int8(random.Int() % int(firstAboveMax))
 }

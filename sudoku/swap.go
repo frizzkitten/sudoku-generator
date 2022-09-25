@@ -4,7 +4,8 @@ func (sudoku Sudoku) randomSwap() Sudoku {
 	swapFunctions := [](func() Sudoku){
 		sudoku.swapRandomRows,
 		sudoku.swapRandomColumns,
-		sudoku.swapRandomNumbers,
+		sudoku.swapRandomNumbers, // add swap mega-rows and mega-colums
+		sudoku.swapRandomMegaRows,
 	}
 
 	randomIndex := randomInt(int8(len(swapFunctions)))
@@ -67,6 +68,25 @@ func (sudoku Sudoku) swapNumbers(number1, number2 int8) Sudoku {
 			}
 		}
 	}
+	return sudoku
+}
+
+func (sudoku Sudoku) swapRandomMegaRows() Sudoku {
+	if sudoku.scale < 2 {
+		return sudoku
+	}
+
+	indexes := shuffle(getIndexesFromZeroTo(sudoku.scaleRoot - 1))
+
+	return sudoku.swapMegaRows(indexes[0], indexes[1])
+}
+
+func (sudoku Sudoku) swapMegaRows(rowIndex1, rowIndex2 int8) Sudoku {
+	var i int8
+	for ; i < sudoku.scaleRoot; i++ {
+		sudoku = sudoku.swapRows(rowIndex1*sudoku.scaleRoot+i, rowIndex2*sudoku.scaleRoot+i)
+	}
+
 	return sudoku
 }
 
