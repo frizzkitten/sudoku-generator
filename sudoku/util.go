@@ -6,6 +6,10 @@ import (
 )
 
 func getIndexesFromZeroTo(max int8) []int8 {
+	if max < 0 {
+		max = -1
+	}
+
 	indexes := make([]int8, max+1)
 	var i int8
 	for ; i <= max; i++ {
