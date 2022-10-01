@@ -1,4 +1,4 @@
-package sudoku 
+package sudoku
 
 import (
 	"math/rand"
@@ -18,30 +18,27 @@ func getIndexesFromZeroTo(max int8) []int8 {
 	return indexes
 }
 
-func getRandomFromSlice[T any](values []T) (int8, T) {
-	numValues := int8(len(values))
-	index := randomInt(numValues)
-	value := values[index]
-	return index, value
-}
-
-func removeIndex[T any](slice []T, index int8) []T {
-	return append(slice[:index], slice[index+1:]...)
-}
-
 func shuffle(slice []int8) []int8 {
-	var i int8
 	sliceLength := int8(len(slice))
-	
-	for ; i < sliceLength; i++ {
+	newSlice := copySlice(slice)
+
+	for i := range newSlice {
 		randomIndex := randomInt(sliceLength)
-		slice[i], slice[randomIndex] = slice[randomIndex], slice[i]
+		newSlice[i], newSlice[randomIndex] = newSlice[randomIndex], newSlice[i]
 	}
 
-	return slice
+	return newSlice
 }
 
 func randomInt(firstAboveMax int8) int8 {
 	random := rand.New(rand.NewSource(time.Now().UnixNano()))
 	return int8(random.Int() % int(firstAboveMax))
+}
+
+func  copySlice[T any](slice []T) []T {
+	copy := make([]T, len(slice))
+	for index, value := range slice {
+		copy[index] = value
+	}
+	return copy
 }
