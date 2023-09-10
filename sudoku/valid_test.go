@@ -12,10 +12,10 @@ func TestIsValid(t *testing.T) {
 			scale:     4,
 			scaleRoot: 2,
 			Rows: []Row{
-				Row{1, 2, 3, 4},
-				Row{3, 4, 1, 2},
-				Row{2, 3, 4, 1},
-				Row{4, 1, 2, 3},
+				{1, 2, 3, 4},
+				{3, 4, 1, 2},
+				{2, 3, 4, 1},
+				{4, 1, 2, 3},
 			},
 		}
 
@@ -27,10 +27,10 @@ func TestIsValid(t *testing.T) {
 			scale:     4,
 			scaleRoot: 2,
 			Rows: []Row{
-				Row{1, 2, 2, 4},
-				Row{3, 4, 1, 3},
-				Row{2, 3, 4, 1},
-				Row{4, 1, 3, 2},
+				{1, 2, 2, 4},
+				{3, 4, 1, 3},
+				{2, 3, 4, 1},
+				{4, 1, 3, 2},
 			},
 		}
 
@@ -42,10 +42,10 @@ func TestIsValid(t *testing.T) {
 			scale:     4,
 			scaleRoot: 2,
 			Rows: []Row{
-				Row{1, 2, 3, 4},
-				Row{3, 4, 2, 1},
-				Row{3, 1, 4, 2},
-				Row{4, 2, 1, 3},
+				{1, 2, 3, 4},
+				{3, 4, 2, 1},
+				{3, 1, 4, 2},
+				{4, 2, 1, 3},
 			},
 		}
 
@@ -57,10 +57,10 @@ func TestIsValid(t *testing.T) {
 			scale:     4,
 			scaleRoot: 2,
 			Rows: []Row{
-				Row{1, 2, 3, 4},
-				Row{2, 4, 1, 3},
-				Row{3, 1, 4, 2},
-				Row{4, 3, 2, 1},
+				{1, 2, 3, 4},
+				{2, 4, 1, 3},
+				{3, 1, 4, 2},
+				{4, 3, 2, 1},
 			},
 		}
 
@@ -72,10 +72,10 @@ func TestIsValid(t *testing.T) {
 			scale:     4,
 			scaleRoot: 2,
 			Rows: []Row{
-				Row{1, 2, 3, 4},
-				Row{3, 4, 1, 2},
-				Row{2, 3, 5, 1},
-				Row{4, 1, 2, 3},
+				{1, 2, 3, 4},
+				{3, 4, 1, 2},
+				{2, 3, 5, 1},
+				{4, 1, 2, 3},
 			},
 		}
 
@@ -87,10 +87,10 @@ func TestIsValid(t *testing.T) {
 			scale:     4,
 			scaleRoot: 2,
 			Rows: []Row{
-				Row{1, 2, 3, 4},
-				Row{3, 4, 1, 0},
-				Row{2, 3, 4, 1},
-				Row{4, 1, 2, 3},
+				{1, 2, 3, 4},
+				{3, 4, 1, 0},
+				{2, 3, 4, 1},
+				{4, 1, 2, 3},
 			},
 		}
 
