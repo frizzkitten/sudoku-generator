@@ -2,44 +2,52 @@ package main
 
 import (
 	"embed"
-	"encoding/json"
-	"fmt"
-	"log"
+	"io/fs"
 	"net/http"
 	"strconv"
 
 	"github.com/frizzkitten/sudoku-generator/sudoku"
+	"github.com/gin-gonic/gin"
 )
 
 //go:embed static/*
 var staticFiles embed.FS
 
 func main() {
-	http.Handle("/", http.FileServer(http.FS(staticFiles)))
-	http.HandleFunc("/generate", handleGenerate)
+	router := gin.Default()
 
-	fmt.Println("Server starting on http://localhost:8080")
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	// Serve static files
+	staticFS, _ := fs.Sub(staticFiles, "static")
+	router.StaticFS("/static", http.FS(staticFS))
+
+	// Serve index.html at root
+	router.GET("/", func(c *gin.Context) {
+		data, _ := staticFiles.ReadFile("static/index.html")
+		c.Data(http.StatusOK, "text/html; charset=utf-8", data)
+	})
+
+	// API endpoint for generating sudoku
+	router.GET("/generate", handleGenerate)
+
+	router.Run(":8080")
 }
 
-func handleGenerate(w http.ResponseWriter, r *http.Request) {
-	baseStr := r.URL.Query().Get("base")
-	if baseStr == "" {
-		baseStr = "3"
-	}
+func handleGenerate(c *gin.Context) {
+	baseStr := c.DefaultQuery("base", "3")
 
 	base, err := strconv.Atoi(baseStr)
 	if err != nil || base < 1 || base > 10 {
-		http.Error(w, "Invalid base. Must be between 1 and 10", http.StatusBadRequest)
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Invalid base. Must be between 1 and 10",
+		})
 		return
 	}
 
 	doku := sudoku.Create(int8(base))
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(map[string]interface{}{
-		"rows":      doku.Rows,
-		"base":      base,
-		"size":      base * base,
+	c.JSON(http.StatusOK, gin.H{
+		"rows": doku.Rows,
+		"base": base,
+		"size": base * base,
 	})
 }
