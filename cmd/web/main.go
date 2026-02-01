@@ -3,6 +3,7 @@ package main
 import (
 	"embed"
 	"io/fs"
+	"math/rand"
 	"net/http"
 	"strconv"
 
@@ -47,11 +48,34 @@ func handleGenerate(c *gin.Context) {
 		return
 	}
 
-	doku := sudoku.Create(int8(base))
+	// Generate complete solution
+	solution := sudoku.Create(int8(base))
+	size := base * base
+
+	// Create puzzle by removing some cells
+	puzzle := make([][]int8, size)
+	for i := range puzzle {
+		puzzle[i] = make([]int8, size)
+		copy(puzzle[i], solution.Rows[i])
+	}
+
+	// Remove cells (0 means empty)
+	// Remove approximately 40-60% of cells depending on difficulty
+	cellsToRemove := (size * size * 40) / 100
+	removed := 0
+	for removed < cellsToRemove {
+		row := rand.Intn(size)
+		col := rand.Intn(size)
+		if puzzle[row][col] != 0 {
+			puzzle[row][col] = 0
+			removed++
+		}
+	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"rows": doku.Rows,
-		"base": base,
-		"size": base * base,
+		"puzzle":   puzzle,
+		"solution": solution.Rows,
+		"base":     base,
+		"size":     size,
 	})
 }

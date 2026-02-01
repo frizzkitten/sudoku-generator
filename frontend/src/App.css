@@ -62,8 +62,26 @@ button:hover {
 
 #sudoku-container {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
   margin-top: 20px;
+  min-height: 200px;
+}
+
+.sudoku-wrapper {
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+  opacity: 1;
+  transform: scale(1);
+}
+
+.sudoku-wrapper.loading {
+  opacity: 0.3;
+  transform: scale(0.98);
+}
+
+.sudoku-wrapper.loaded {
+  opacity: 1;
+  transform: scale(1);
 }
 
 .sudoku-grid {
@@ -84,6 +102,36 @@ button:hover {
   border: 1px solid #999;
   background-color: white;
   color: #000;
+  text-align: center;
+  font-family: 'Georgia', 'Times New Roman', serif;
+}
+
+.sudoku-cell.given {
+  background-color: #f0f0f0;
+  font-weight: bold;
+}
+
+.sudoku-cell.editable {
+  background-color: white;
+  padding: 0;
+  outline: none;
+  transition: background-color 0.2s;
+}
+
+.sudoku-cell.editable:focus {
+  background-color: #fffacd;
+  outline: 2px solid #4a90e2;
+  outline-offset: -2px;
+}
+
+.sudoku-cell.correct {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.sudoku-cell.incorrect {
+  background-color: #f8d7da;
+  color: #721c24;
 }
 
 /* Thicker borders for box boundaries */
@@ -108,7 +156,18 @@ button:hover {
   text-align: center;
   font-size: 1.2em;
   color: #666;
-  padding: 40px;
+  padding: 20px;
+  position: absolute;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
 }
 
 .error {
@@ -118,4 +177,64 @@ button:hover {
   background-color: #fee;
   border: 2px solid #d00;
   margin: 20px 0;
+}
+
+.check-section {
+  margin-top: 30px;
+  text-align: center;
+}
+
+.check-button {
+  padding: 12px 40px;
+  font-size: 1.2em;
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-family: 'Georgia', serif;
+  transition: background-color 0.3s;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.check-button:hover {
+  background-color: #357abd;
+}
+
+.check-message {
+  margin-top: 15px;
+  padding: 15px 25px;
+  border-radius: 5px;
+  font-size: 1.1em;
+  font-weight: bold;
+  animation: slideIn 0.3s ease-out;
+}
+
+.check-message.success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 2px solid #28a745;
+}
+
+.check-message.partial {
+  background-color: #d1ecf1;
+  color: #0c5460;
+  border: 2px solid #17a2b8;
+}
+
+.check-message.warning {
+  background-color: #fff3cd;
+  color: #856404;
+  border: 2px solid #ffc107;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
