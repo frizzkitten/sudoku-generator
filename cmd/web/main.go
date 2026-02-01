@@ -10,24 +10,28 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-//go:embed static/*
-var staticFiles embed.FS
+//go:embed dist/*
+var distFiles embed.FS
 
 func main() {
 	router := gin.Default()
 
-	// Serve static files
-	staticFS, _ := fs.Sub(staticFiles, "static")
-	router.StaticFS("/static", http.FS(staticFS))
-
-	// Serve index.html at root
-	router.GET("/", func(c *gin.Context) {
-		data, _ := staticFiles.ReadFile("static/index.html")
-		c.Data(http.StatusOK, "text/html; charset=utf-8", data)
-	})
-
 	// API endpoint for generating sudoku
 	router.GET("/generate", handleGenerate)
+
+	// Serve React app static assets
+	distFS, _ := fs.Sub(distFiles, "dist")
+	router.StaticFS("/assets", http.FS(distFS))
+
+	// Serve index.html for all other routes (React router support)
+	router.NoRoute(func(c *gin.Context) {
+		data, err := distFiles.ReadFile("dist/index.html")
+		if err != nil {
+			c.String(http.StatusNotFound, "404 page not found")
+			return
+		}
+		c.Data(http.StatusOK, "text/html; charset=utf-8", data)
+	})
 
 	router.Run(":8080")
 }
