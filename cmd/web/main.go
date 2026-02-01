@@ -3,6 +3,7 @@ package main
 import (
 	"embed"
 	"io/fs"
+	"math/rand"
 	"net/http"
 	"strconv"
 
@@ -10,24 +11,28 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-//go:embed static/*
-var staticFiles embed.FS
+//go:embed dist/*
+var distFiles embed.FS
 
 func main() {
 	router := gin.Default()
 
-	// Serve static files
-	staticFS, _ := fs.Sub(staticFiles, "static")
-	router.StaticFS("/static", http.FS(staticFS))
-
-	// Serve index.html at root
-	router.GET("/", func(c *gin.Context) {
-		data, _ := staticFiles.ReadFile("static/index.html")
-		c.Data(http.StatusOK, "text/html; charset=utf-8", data)
-	})
-
 	// API endpoint for generating sudoku
 	router.GET("/generate", handleGenerate)
+
+	// Serve React app static assets
+	distFS, _ := fs.Sub(distFiles, "dist")
+	router.StaticFS("/assets", http.FS(distFS))
+
+	// Serve index.html for all other routes (React router support)
+	router.NoRoute(func(c *gin.Context) {
+		data, err := distFiles.ReadFile("dist/index.html")
+		if err != nil {
+			c.String(http.StatusNotFound, "404 page not found")
+			return
+		}
+		c.Data(http.StatusOK, "text/html; charset=utf-8", data)
+	})
 
 	router.Run(":8080")
 }
@@ -43,11 +48,34 @@ func handleGenerate(c *gin.Context) {
 		return
 	}
 
-	doku := sudoku.Create(int8(base))
+	// Generate complete solution
+	solution := sudoku.Create(int8(base))
+	size := base * base
+
+	// Create puzzle by removing some cells
+	puzzle := make([][]int8, size)
+	for i := range puzzle {
+		puzzle[i] = make([]int8, size)
+		copy(puzzle[i], solution.Rows[i])
+	}
+
+	// Remove cells (0 means empty)
+	// Remove approximately 40-60% of cells depending on difficulty
+	cellsToRemove := (size * size * 40) / 100
+	removed := 0
+	for removed < cellsToRemove {
+		row := rand.Intn(size)
+		col := rand.Intn(size)
+		if puzzle[row][col] != 0 {
+			puzzle[row][col] = 0
+			removed++
+		}
+	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"rows": doku.Rows,
-		"base": base,
-		"size": base * base,
+		"puzzle":   puzzle,
+		"solution": solution.Rows,
+		"base":     base,
+		"size":     size,
 	})
 }
